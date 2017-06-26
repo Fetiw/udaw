@@ -1,15 +1,15 @@
-var SIZE_ROW = 20;
-var SIZE_COL = 20;
+const SIZE_ROW = 20;
+const SIZE_COL = 20;
 
 function randomInteger(min, max) {
-  var rand = min - 0.5 + Math.random() * (max - min + 1)
+  let rand = min - 0.5 + Math.random() * (max - min + 1);
   rand = Math.round(rand);
   return rand;
 }
 
 function Shake(matrix) {
-  var currentCourse = { row: 1, col: 0 };
-  var body = [{
+  let currentCourse = { row: 1, col: 0 };
+  let body = [{
     row: randomInteger(0, SIZE_ROW),
     col: randomInteger(0, SIZE_COL)
   }];
@@ -17,22 +17,22 @@ function Shake(matrix) {
   matrix.fireCells(body);
 
   function move() {
-    var head = body[0];
+    let head = body[0];
 
     console.log(head);
-    var nextHead = getNextCoordinates(head, currentCourse);
+    let nextHead = getNextCoordinates(head, currentCourse);
     console.log(head);
 
     body.unshift(nextHead);
     matrix.fireCells([nextHead]);
 
-    var tail = body.pop();
+    let tail = body.pop();
     matrix.cleanCells([tail]);
   }
 
   function getNextCoordinates(coordinates, currentCourse) {
     coordinates.test = 1;
-    var newCoordinates = {
+    let newCoordinates = {
       row: coordinates.row + currentCourse.row,
       col: coordinates.col + currentCourse.col
     };
@@ -58,7 +58,7 @@ function Shake(matrix) {
   }
 
   function setCourse(course) {
-    var COURSE = {
+    const COURSE = {
       "ArrowUp": { row: -1, col: 0 },
       "ArrowDown": { row: 1, col: 0 },
       "ArrowRight": { row: 0, col: 1 },
@@ -80,22 +80,22 @@ function MATRIX($container, i, j) {
     height: 40 * j + 50,
   });
 
-  for( var row = 0; row < i; row++ ) {
-    for( var col = 0; col < j; col++ ) {
-      $container.append("<div class='block' data-row='" + row + "' data-col='" + col + "'/>") //prepend
+  for( let row = 0; row < i; row++ ) {
+    for( let col = 0; col < j; col++ ) {
+      $container.append(`<div class='block' data-row='${row}' data-col='${col}'/>`);
     }
   }
 
   function fireCells(coordinates) {
-    for( var i = 0; i < coordinates.length; i++ ) {
-      $('.block[data-row=' + coordinates[i].row + '][data-col=' + coordinates[i].col + ']')
+    for( let i = 0; i < coordinates.length; i++ ) {
+      $(`.block[data-row=${coordinates[i].row}][data-col=${coordinates[i].col}]`)
         .addClass('blue');
     }
   }
 
   function cleanCells(coordinates) {
-    for( var i = 0; i < coordinates.length; i++ ) {
-      $('.block[data-row=' + coordinates[i].row + '][data-col=' + coordinates[i].col + ']')
+    for( let i = 0; i < coordinates.length; i++ ) {
+      $(`.block[data-row=${coordinates[i].row}][data-col=${coordinates[i].col}]`)
         .removeClass('blue');
     }
   }
@@ -107,8 +107,8 @@ function MATRIX($container, i, j) {
 }
 
 function start() {
-  var matrix = MATRIX($('#matrix'), SIZE_COL, SIZE_ROW);
-  var snake = Shake(matrix);
+  let matrix = MATRIX($('#matrix'), SIZE_COL, SIZE_ROW);
+  let snake = Shake(matrix);
 
 
   $(window).keydown(function(e) {
@@ -121,5 +121,6 @@ function start() {
 }
 
 start();
+
 
 

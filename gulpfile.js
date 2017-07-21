@@ -32,7 +32,11 @@ var $css = [
 ];
 
 var $js = [
-  './js/custom.js'
+  './js/custom.js',
+  './js/food.js',
+  './js/matrix.js',
+  './js/snake.js',
+  './js/start.js',
 ];
 
 /* Local setup */

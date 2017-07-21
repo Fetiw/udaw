@@ -23,7 +23,12 @@ body {
   border: 1px solid green;
 }
 
-.blue {
+.snake {
   animation-duration: 0.5s;
   background: blue;
+}
+
+.food{
+  animation-duration: 0.5s;
+  background: red;
 }

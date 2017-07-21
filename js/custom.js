@@ -1,63 +1,64 @@
 const SIZE_ROW = 20;
 const SIZE_COL = 20;
 
-function randomInteger(min, max) {
+let randomInteger = (min, max) => {
   let rand = min - 0.5 + Math.random() * (max - min + 1);
   rand = Math.round(rand);
   return rand;
 }
 
-function Shake(matrix) {
+let Snake = (matrix, food, row, col) => {
+  const TYPE = 'snake';
   let currentCourse = { row: 1, col: 0 };
   let body = [{
-    row: randomInteger(0, SIZE_ROW),
-    col: randomInteger(0, SIZE_COL)
+    row: randomInteger(0, row),
+    col: randomInteger(0, col)
   }];
 
-  matrix.fireCells(body);
+  matrix.fireCells(body, TYPE);
 
-  function move() {
+  let move = () => {
     let head = body[0];
-
-    console.log(head);
     let nextHead = getNextCoordinates(head, currentCourse);
-    console.log(head);
 
     body.unshift(nextHead);
-    matrix.fireCells([nextHead]);
+    matrix.fireCells([nextHead], TYPE);
 
-    let tail = body.pop();
-    matrix.cleanCells([tail]);
+    if( !matrix.checkFood(nextHead) ) {
+      let tail = body.pop();
+      matrix.cleanCells([tail]);
+    }
+    else {
+      food();
+    }
   }
 
-  function getNextCoordinates(coordinates, currentCourse) {
-    coordinates.test = 1;
+  let getNextCoordinates = (coordinates, currentCourse) => {
     let newCoordinates = {
       row: coordinates.row + currentCourse.row,
       col: coordinates.col + currentCourse.col
     };
 
-
     if( newCoordinates.row < 0 ) {
-      newCoordinates.row = SIZE_ROW - 1;
+      newCoordinates.row = row - 1;
     }
 
-    if( newCoordinates.row === SIZE_ROW ) {
+    if( newCoordinates.row === row ) {
       newCoordinates.row = 0;
     }
 
     if( newCoordinates.col < 0 ) {
-      newCoordinates.col = SIZE_COL - 1;
+      newCoordinates.col = col - 1;
     }
 
-    if( newCoordinates.col === SIZE_COL ) {
+    if( newCoordinates.col === col ) {
       newCoordinates.col = 0;
     }
 
     return newCoordinates;
   }
 
-  function setCourse(course) {
+  let setCourse = (course) => {
     const COURSE = {
       "ArrowUp": { row: -1, col: 0 },
       "ArrowDown": { row: 1, col: 0 },
@@ -68,47 +69,59 @@ function Shake(matrix) {
     currentCourse = COURSE[course];
   }
 
-  return {
-    move: move,
-    setCourse: setCourse
-  }
+  return { move, setCourse }
 }
 
-function MATRIX($container, i, j) {
+let MATRIX = ($container, row, col) => {
   $container.css({
-    width: 40 * i + 50,
-    height: 40 * j + 50,
+    width: 40 * row + 50,
+    height: 40 * col + 50,
   });
 
-  for( let row = 0; row < i; row++ ) {
-    for( let col = 0; col < j; col++ ) {
-      $container.append(`<div class='block' data-row='${row}' data-col='${col}'/>`);
+  for( let i = 0; i < row; i++ ) {
+    for( let j = 0; j < col; j++ ) {
+      $container.append(`<div class='block' data-row=${i} data-col=${j}/>`);
     }
   }
 
-  function fireCells(coordinates) {
+  let fireCells = (coordinates, type) => {
     for( let i = 0; i < coordinates.length; i++ ) {
       $(`.block[data-row=${coordinates[i].row}][data-col=${coordinates[i].col}]`)
-        .addClass('blue');
+        .addClass(type)
     }
   }
 
-  function cleanCells(coordinates) {
+  let cleanCells = (coordinates) =>{
     for( let i = 0; i < coordinates.length; i++ ) {
       $(`.block[data-row=${coordinates[i].row}][data-col=${coordinates[i].col}]`)
-        .removeClass('blue');
+        .removeClass('snake')
+        .removeClass('food');
     }
   }
 
-  return {
-    cleanCells: cleanCells,
-    fireCells: fireCells
+  let checkFood = (coordinate) =>{
+    return $(`.block[data-row=${coordinate.row}][data-col=${coordinate.col}]`)
+      .hasClass('food');
+  }
+
+  return { cleanCells, fireCells, checkFood }
+}
+
+let Food = (matrix, row, col) => {
+  return function() {
+    matrix.fireCells([{
+      row: randomInteger(0, row),
+      col: randomInteger(0, col)
+    }], 'food');
   }
 }
 
-function start() {
+let start = () => {
   let matrix = MATRIX($('#matrix'), SIZE_COL, SIZE_ROW);
-  let snake = Shake(matrix);
+  let food = Food(matrix, SIZE_ROW, SIZE_COL);
+  let snake = Snake(matrix, food, SIZE_ROW, SIZE_COL);
+
+  food();
 
 
   $(window).keydown(function(e) {
@@ -117,7 +130,7 @@ function start() {
 
   setInterval(function() {
     snake.move();
-  }, 300);
+  }, 100);
 }
 
 start();

@@ -3,8 +3,8 @@ const SIZE_COL = 20;
 
 let randomInteger = (min, max) => {
   let rand = min - 0.5 + Math.random() * (max - min + 1);
-  rand = Math.round(rand);
-  return rand;
+
+  return Math.round(rand);
 }
 
 let Snake = (matrix, food, row, col) => {
